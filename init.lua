@@ -5,6 +5,22 @@ if not vim.loop.fs_stat(lazypath) then
 		"https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath,
 	})
 end
+
+if os.getenv('WEZTERM_PANE') then
+    vim.api.nvim_create_autocmd({ 'VimEnter', 'VimResume' }, {
+        group = vim.api.nvim_create_augroup('WeztermSetUserVar', { clear = true }),
+        callback = function()
+            io.stdout:write("\x1b]1337;SetUserVar=IS_NVIM=dHJ1ZQ==\x07") -- "true" en base64
+        end,
+    })
+    vim.api.nvim_create_autocmd({ 'VimLeave', 'VimSuspend' }, {
+        group = vim.api.nvim_create_augroup('WeztermUnsetUserVar', { clear = true }),
+        callback = function()
+            io.stdout:write("\x1b]1337;SetUserVar=IS_NVIM=ZmFsc2U=\x07") -- "false" en base64
+        end,
+    })
+end
+
 vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -17,3 +33,5 @@ package.cpath = package.cpath .. ";" .. luarocks_cpath
 require("lazy").setup("plugins")
 
 require("config.options")
+require("config.utils")
+require("config.keymaps")
