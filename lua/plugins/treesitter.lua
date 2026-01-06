@@ -1,9 +1,10 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    version = false, -- On prend la dernière version
+    version = false,
+    tag = "v0.10.0",
     build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" }, -- On remplace LazyFile par des événements standards
+    event = { "BufReadPost", "BufNewFile" },
     opts = {
       highlight = { enable = true },
       indent = { enable = true },
