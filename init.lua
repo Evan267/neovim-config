@@ -21,6 +21,13 @@ if os.getenv('WEZTERM_PANE') then
     })
 end
 
+vim.notify = function(msg, log_level, _opts)
+  if msg:match("deprecated") or msg:match("Feature will be removed") then
+    return
+  end
+  return vim.api.nvim_echo({{msg}}, true, {})
+end
+
 vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "

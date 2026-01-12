@@ -12,9 +12,6 @@ return {
       require('telescope').setup({
 	defaults = {
 	  file_ignore_patterns = { ".git" },
-	  layout_config = {
-	    preview_width = 0.6
-	  }
 	}
       })
 
