@@ -69,34 +69,70 @@ return {
 	return true
       end
 
+      local function generate_java_item(current_dir, name)
+	local package = project.get_java_package(current_dir)
+	if not package then return false end
+
+	vim.ui.select({ "class", "interface", "record", "enum", "annotation" }, {
+	  prompt = "Type de fichier Java pour '" .. name .. "':",
+	}, function(choice)
+	  if not choice then return end
+
+	  local filename = name .. ".java"
+	  local filepath = current_dir .. filename
+
+	  local lines = {
+	    "package " .. package .. ";",
+	    "",
+	    "public " .. choice .. " " .. name .. " {",
+	    "",
+	    "}",
+	  }
+
+	  if choice == "record" then
+	    lines[3] = "public " .. choice .. " " .. name .. "() {"
+	  end
+
+	  vim.fn.writefile(lines, filepath)
+	  oil.discard_all_changes()
+	  vim.defer_fn(function()
+	    vim.cmd("edit " .. filepath)
+	  end, 50)
+	end)
+
+	return true
+      end
+
       local function smart_expand()
 	local line = vim.api.nvim_get_current_line()
 	local current_dir = oil.get_current_dir()
-
 	if not current_dir then return end
 
-	local slash_count = select(2, line:gsub("/", ""))
-	if not line:match("/$") or slash_count > 1 then 
-	  return 
+	local item_name = line:gsub("/", "")
+	if item_name == "" then return end
+
+	local was_angular = generate_angular_item(current_dir, item_name)
+	if was_angular then return end
+
+	if project.is_java_dir(current_dir) and not line:match("/$") then
+	  generate_java_item(current_dir, item_name)
+	  return
 	end
 
-	local folder_name = line:gsub("/", "")
-
-	local was_angular = generate_angular_item(current_dir, folder_name)
-
-	if not was_angular then
+	local slash_count = select(2, line:gsub("/", ""))
+	if line:match("/$") and slash_count == 1 then
 	  local subdirs = {}
 	  if project.is_features_dir(current_dir) then
 	    subdirs = { "application/", "domain/", "infrastructure/", "presentation/" }
 	  elseif project.is_components_dir(current_dir) then
 	    subdirs = { "containers/", "presenters/" }
 	  end
+
 	  if #subdirs > 0 then
 	    local lines_to_insert = {}
 	    for _, sub in ipairs(subdirs) do
-	      table.insert(lines_to_insert, folder_name .. "/" .. sub)
+	      table.insert(lines_to_insert, item_name .. "/" .. sub)
 	    end
-
 	    local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
 	    vim.api.nvim_buf_set_lines(0, row, row, false, lines_to_insert)
 	    vim.api.nvim_buf_set_lines(0, row-1, row, false, {})

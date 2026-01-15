@@ -9,6 +9,18 @@ function M.is_angular()
   return vim.fn.filereadable(vim.fn.getcwd() .. "/angular.json") == 1
 end
 
+function M.is_java_dir(dir)
+  return dir:match("src/[main|test]+/java/") ~= nil
+end
+
+function M.get_java_package(dir)
+  local auth_path = dir:match("src/[main|test]+/java/(.+)$")
+  if auth_path then
+    return auth_path:gsub("/", "."):gsub("%.$", "")
+  end
+  return nil
+end
+
 function M.get_project_root()
   return vim.fs.dirname(vim.fs.find({'.git', 'pom.xml', 'angular.json'}, { upward = true })[1]) or vim.fn.getcwd()
 end
