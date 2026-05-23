@@ -11,6 +11,8 @@ return {
   },
   opts = {
     suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+    buftype_exclude = { "nofile", "terminal", "help" },
+    args_allow_files_only = true,
     mappings = {
       delete_session = { "i", "<C-d>" },
       alternate_session = { "i", "<C-s>" },

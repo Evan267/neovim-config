@@ -28,6 +28,11 @@ vim.notify = function(msg, log_level, _opts)
   return vim.api.nvim_echo({{msg}}, true, {})
 end
 
+-- Patch for Neovim 0.11+ (ft_to_lang removed from treesitter API)
+if vim.treesitter and vim.treesitter.language and not vim.treesitter.language.ft_to_lang then
+  vim.treesitter.language.ft_to_lang = function(ft) return ft end
+end
+
 vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -42,3 +47,4 @@ require("lazy").setup("plugins")
 require("config.options")
 require("config.utils")
 require("config.keymaps")
+require("config.commands")

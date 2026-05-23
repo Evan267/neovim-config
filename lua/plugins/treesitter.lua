@@ -8,7 +8,7 @@ return {
       'windwp/nvim-ts-autotag'
     },
     opts = {
-      ensure_installed = { "java", "xml", "lua", "vim", "html" },
+      ensure_installed = { "java", "xml", "lua", "vim", "html", "angular", "css", "scss" },
       highlight = { enable = true },
     },
     config = function(_, opts)
