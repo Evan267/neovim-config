@@ -22,10 +22,11 @@ if os.getenv('WEZTERM_PANE') then
 end
 
 vim.notify = function(msg, log_level, _opts)
-  if msg:match("deprecated") or msg:match("Feature will be removed") then
+  local text = tostring(msg)
+  if text:match("deprecated") or text:match("Feature will be removed") then
     return
   end
-  return vim.api.nvim_echo({{msg}}, true, {})
+  return vim.api.nvim_echo({ { text } }, true, {})
 end
 
 -- Patch for Neovim 0.11+ (ft_to_lang removed from treesitter API)

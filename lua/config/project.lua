@@ -14,11 +14,11 @@ function M.is_rust()
 end
 
 function M.is_java_dir(dir)
-  return dir:match("src/[main|test]+/java/") ~= nil
+  return dir:match("src/main/java/") ~= nil or dir:match("src/test/java/") ~= nil
 end
 
 function M.get_java_package(dir)
-  local auth_path = dir:match("src/[main|test]+/java/(.+)$")
+  local auth_path = dir:match("src/main/java/(.+)$") or dir:match("src/test/java/(.+)$")
   if auth_path then
     return auth_path:gsub("/", "."):gsub("%.$", "")
   end
@@ -101,7 +101,7 @@ function M.switch_to_ext(ext)
   end
 
   if target and target ~= current_file and vim.fn.filereadable(target) == 1 then
-    vim.cmd("edit " .. target)
+    vim.cmd.edit(vim.fn.fnameescape(target))
   elseif target == current_file then
   else
     vim.notify("Fichier ." .. ext .. " introuvable", vim.log.levels.WARN)
